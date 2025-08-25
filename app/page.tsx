@@ -71,7 +71,7 @@ export default function MLPipelineVisualization() {
     },
     {
       id: "decision",
-      label: `random(${randomValue.toFixed(3)}) ${randomValue < epsilonValue ? "<" : "≥"} epsilon?`,
+      label: `random(${randomValue.toFixed(3)}) < epsilon? ${randomValue < epsilonValue} `,
       description: `Decision point: Random value ${randomValue.toFixed(3)} ${randomValue < epsilonValue ? "is less than" : "is greater than or equal to"} epsilon (${epsilonValue})`,
       x: 370,
       y: 240,
