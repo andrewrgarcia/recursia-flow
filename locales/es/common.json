@@ -1,6 +1,6 @@
 {
-  "title": "Flujo de Pronóstico de Series Temporales",
-  "subtitle": "Selección guiada de variables mediante introspección recursiva",
+  "title": "Flujo de Selección de Variables en Series Temporales con IA",
+  "subtitle": "Sistema agnóstico basado en meta-aprendizaje para elegir variables de pronóstico",
   "author": "Andrew R. Garcia, PhD 2025",
   "controls": {
     "play": "Reproducir",
@@ -52,7 +52,7 @@
       "description": "Almacena incrustaciones y pérdida de pronóstico en cada iteración para habilitar actualizaciones de meta-aprendizaje."
     },
     "iteration-check": {
-      "label": "¿Cada U iteraciones?",
+      "label": "¿Iteración es múltiplo de U?",
       "description": "Revisión periódica para determinar cuándo realizar actualizaciones de meta-aprendizaje."
     },
     "update": {
@@ -87,7 +87,9 @@
   "connections": {
     "true": "Verdadero",
     "false": "Falso",
-    "meta_update": "Actualización de meta-aprendizaje usando el rendimiento del pronóstico"
+    "meta_update": "Actualización de meta-aprendizaje usando el rendimiento del pronóstico",
+    "embeddings": "Incrustaciones",
+    "loss": "Pérdida de Pronóstico"  
   },
   "epsilon_expl": {
     "warmup": "Fase de calentamiento: Siempre explorando aleatoriamente",

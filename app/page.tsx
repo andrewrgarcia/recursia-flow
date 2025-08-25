@@ -83,7 +83,7 @@ export default function MLPipelineVisualization() {
       id: "decision",
       label: `${t("nodes.decision.label")}: random(${randomValue.toFixed(
         3
-      )}) < epsilon? ${randomValue < epsilonValue}`,
+      )}) < epsilon?`,
       description: `${t("nodes.decision.description")}: Random value ${randomValue.toFixed(
         3
       )} ${
@@ -215,8 +215,8 @@ export default function MLPipelineVisualization() {
     { from: "random-picker", to: "selected-vars", isActive: currentStep >= 4 && isExploring },
     { from: "selected-vars", to: "embedder", isActive: currentStep >= 5 },
     { from: "selected-vars", to: "forecasting", isActive: currentStep >= 6 },
-    { from: "embedder", to: "history", label: "Embeddings", isActive: currentStep >= 7 },
-    { from: "forecasting", to: "history", label: "Forecast Loss", isActive: currentStep >= 7 },
+    { from: "embedder", to: "history", label: t("connections.embeddings"), isActive: currentStep >= 7 },
+    { from: "forecasting", to: "history", label: t("connections.loss"), isActive: currentStep >= 7 },
     { from: "history", to: "iteration-check", isActive: currentStep >= 8 },
     {
       from: "iteration-check",

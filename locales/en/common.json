@@ -1,6 +1,6 @@
 {
-  "title": "Time Series Forecasting Workflow",
-  "subtitle": "Guided Variable Selection through Recursive Introspection",
+  "title": "AI-Driven Variable Selection for Time Series Forecasting",
+  "subtitle": "A Model-Agnostic Meta-Learning Workflow",
   "author": "Andrew R. Garcia, PhD 2025",
   "controls": {
     "play": "Play",
@@ -52,7 +52,7 @@
       "description": "Stores embeddings and forecast loss for each iteration to enable metalearning updates."
     },
     "iteration-check": {
-      "label": "every U iterations?",
+      "label": "Iteration multiple of U?",
       "description": "Periodic check to determine when to perform metalearning updates to improve the system."
     },
     "update": {
@@ -87,7 +87,9 @@
   "connections": {
     "true": "True",
     "false": "False",
-    "meta_update": "Meta-learning update using forecast performance"
+    "meta_update": "Meta-learning update using forecast performance",
+    "embeddings": "Embeddings",
+    "loss": "Forecast Loss"
   },
   "epsilon_expl": {
     "warmup": "Warmup phase: Always exploring randomly",
