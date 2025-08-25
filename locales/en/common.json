@@ -28,7 +28,7 @@
       "description": "Decision based on epsilon threshold"
     },
     "introspector": {
-      "label": "Introspector G [Exploit: AI]",
+      "label": "Introspector G",
       "description": "Neural network that learns to select the most informative variables based on historical performance."
     },
     "random-picker": {

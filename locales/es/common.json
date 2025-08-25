@@ -28,7 +28,7 @@
       "description": "Decisión basada en el umbral de epsilon"
     },
     "introspector": {
-      "label": "Introspector G [Explotar: IA]",
+      "label": "Introspector G",
       "description": "Red neuronal que aprende a seleccionar las variables más informativas basadas en el rendimiento histórico."
     },
     "random-picker": {
