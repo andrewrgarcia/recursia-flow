@@ -1,0 +1,97 @@
+{
+  "title": "Time Series Forecasting Workflow",
+  "subtitle": "Guided Variable Selection through Recursive Introspection",
+  "author": "Andrew R. Garcia, PhD 2025",
+  "controls": {
+    "play": "Play",
+    "pause": "Pause",
+    "reset": "Reset",
+    "lang": {
+      "en": "EN",
+      "es": "ES"
+    }
+  },
+
+  "nodes": {
+    "database": {
+      "label": "Full Time Series DB",
+      "description": "Complete historical time series data repository containing all available variables and their temporal patterns."
+    },
+    "warmup-note": {
+      "warmupLabel": "During warmup: always random",
+      "activeLabel": "After warmup: epsilon-greedy",
+      "warmupDesc": "During the warmup phase, the system always explores randomly to gather initial data.",
+      "activeDesc": "After warmup, the system uses epsilon-greedy strategy to balance exploration and exploitation."
+    },
+    "decision": {
+      "label": "Decision point",
+      "description": "Decision based on epsilon threshold"
+    },
+    "introspector": {
+      "label": "Introspector G [Exploit: AI]",
+      "description": "Neural network that learns to select the most informative variables based on historical performance."
+    },
+    "random-picker": {
+      "label": "Random Variable Picker",
+      "description": "Randomly selects variables for exploration to discover potentially useful new combinations."
+    },
+    "selected-vars": {
+      "label": "Selected Variables",
+      "description": "The chosen set of variables from either exploitation or exploration strategy."
+    },
+    "embedder": {
+      "label": "Series Embedder (with Metadata)",
+      "description": "Transforms selected time series variables into dense vector representations. Obtains: Embeddings of Selected Variables"
+    },
+    "forecasting": {
+      "label": "Forecasting Model",
+      "description": "Random Forest regressors, custom Neural Networks, VARs, you name it. Outputs: Forecast Loss."
+    },
+    "history": {
+      "label": "(Embeddings, Loss) → History Log",
+      "description": "Stores embeddings and forecast loss for each iteration to enable metalearning updates."
+    },
+    "iteration-check": {
+      "label": "every U iterations?",
+      "description": "Periodic check to determine when to perform metalearning updates to improve the system."
+    },
+    "update": {
+      "label": "Update: Introspector G & Series Embedder",
+      "description": "Meta-learning update using forecast performance to improve both components."
+    }
+  },
+
+  "epsilon_status": "Epsilon-Greedy Status",
+  "phase": "Phase",
+  "epsilon": "Epsilon (ε)",
+  "random_value": "Random Value",
+  "strategy": "Strategy",
+  "warmup": "🔥 WARMUP",
+  "active": "🎯 ACTIVE",
+  "explore": "🎲 EXPLORE",
+  "exploit": "🧠 EXPLOIT",
+  "progress": "Progress",
+  "step": "Step {{current}} of {{total}}",
+  "complete": "Pipeline complete! The system continues iterating to improve performance through metalearning.",
+  "current_step": "Current Step",
+  "node_details": "Node Details",
+  "legend": "Legend",
+  "legend_items": {
+    "process": "Process",
+    "data": "Data Store",
+    "decision_exploit": "Decision (Exploit)",
+    "decision_explore": "Decision (Explore)"
+  },
+
+
+  "connections": {
+    "true": "True",
+    "false": "False",
+    "meta_update": "Meta-learning update using forecast performance"
+  },
+  "epsilon_expl": {
+    "warmup": "Warmup phase: Always exploring randomly",
+    "explore": "{{value}} < {{epsilon}} → Explore randomly",
+    "exploit": "{{value}} ≥ {{epsilon}} → Exploit best variables"
+  }
+}

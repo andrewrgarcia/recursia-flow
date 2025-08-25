@@ -1,0 +1,97 @@
+{
+  "title": "Flujo de Pronóstico de Series Temporales",
+  "subtitle": "Selección guiada de variables mediante introspección recursiva",
+  "author": "Andrew R. Garcia, PhD 2025",
+  "controls": {
+    "play": "Reproducir",
+    "pause": "Pausa",
+    "reset": "Reiniciar",
+    "lang": {
+      "en": "EN",
+      "es": "ES"
+    }
+  },
+
+  "nodes": {
+    "database": {
+      "label": "Base de Datos de Series Temporales",
+      "description": "Repositorio histórico completo de series temporales con todas las variables disponibles y sus patrones temporales."
+    },
+    "warmup-note": {
+      "warmupLabel": "Durante calentamiento: siempre aleatorio",
+      "activeLabel": "Después de calentamiento: epsilon-greedy",
+      "warmupDesc": "Durante la fase de calentamiento, el sistema siempre explora aleatoriamente para recopilar datos iniciales.",
+      "activeDesc": "Después del calentamiento, el sistema usa la estrategia epsilon-greedy para equilibrar exploración y explotación."
+    },
+    "decision": {
+      "label": "Punto de decisión",
+      "description": "Decisión basada en el umbral de epsilon"
+    },
+    "introspector": {
+      "label": "Introspector G [Explotar: IA]",
+      "description": "Red neuronal que aprende a seleccionar las variables más informativas basadas en el rendimiento histórico."
+    },
+    "random-picker": {
+      "label": "Selector Aleatorio de Variables",
+      "description": "Selecciona variables al azar para explorar combinaciones potencialmente útiles."
+    },
+    "selected-vars": {
+      "label": "Variables Seleccionadas",
+      "description": "El conjunto elegido de variables provenientes de la estrategia de explotación o exploración."
+    },
+    "embedder": {
+      "label": "Incrustador de Series (con Metadatos)",
+      "description": "Transforma las series temporales seleccionadas en representaciones vectoriales densas. Obtiene: incrustaciones de variables seleccionadas."
+    },
+    "forecasting": {
+      "label": "Modelo de Pronóstico",
+      "description": "Regresores Random Forest, redes neuronales personalizadas, VARs, lo que quieras. Salida: pérdida de pronóstico."
+    },
+    "history": {
+      "label": "(Incrustaciones, Pérdida) → Registro Histórico",
+      "description": "Almacena incrustaciones y pérdida de pronóstico en cada iteración para habilitar actualizaciones de meta-aprendizaje."
+    },
+    "iteration-check": {
+      "label": "¿Cada U iteraciones?",
+      "description": "Revisión periódica para determinar cuándo realizar actualizaciones de meta-aprendizaje."
+    },
+    "update": {
+      "label": "Actualizar: Introspector G & Incrustador de Series",
+      "description": "Actualización de meta-aprendizaje usando el rendimiento del pronóstico para mejorar ambos componentes."
+    }
+  },
+
+
+  "epsilon_status": "Estado Epsilon-Greedy",
+  "phase": "Fase",
+  "epsilon": "Epsilon (ε)",
+  "random_value": "Valor Aleatorio",
+  "strategy": "Estrategia",
+  "warmup": "🔥 CALENTAMIENTO",
+  "active": "🎯 ACTIVO",
+  "explore": "🎲 EXPLORAR",
+  "exploit": "🧠 EXPLOTAR",
+  "progress": "Progreso",
+  "step": "Paso {{current}} de {{total}}",
+  "complete": "¡Pipeline completo! El sistema sigue iterando para mejorar el rendimiento mediante meta-aprendizaje.",
+  "current_step": "Paso Actual",
+  "node_details": "Detalles del Nodo",
+  "legend": "Leyenda",
+  "legend_items": {
+    "process": "Proceso",
+    "data": "Almacén de Datos",
+    "decision_exploit": "Decisión (Explotar)",
+    "decision_explore": "Decisión (Explorar)"
+  },
+
+  "connections": {
+    "true": "Verdadero",
+    "false": "Falso",
+    "meta_update": "Actualización de meta-aprendizaje usando el rendimiento del pronóstico"
+  },
+  "epsilon_expl": {
+    "warmup": "Fase de calentamiento: Siempre explorando aleatoriamente",
+    "explore": "{{value}} < {{epsilon}} → Explorar aleatoriamente",
+    "exploit": "{{value}} ≥ {{epsilon}} → Explotar mejores variables"
+  }
+}

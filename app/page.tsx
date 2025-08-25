@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Play, Pause, RotateCcw, Brain, Database, TrendingUp, Shuffle, CoffeeIcon } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
 interface FlowchartNode {
   id: string
@@ -29,7 +30,13 @@ interface Connection {
   isActive: boolean
 }
 
+
 export default function MLPipelineVisualization() {
+  const { t, i18n } = useTranslation()
+
+  const toggleLang = () => {
+    i18n.changeLanguage(i18n.language === "en" ? "es" : "en")
+  }
   const [currentStep, setCurrentStep] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
   const [selectedNode, setSelectedNode] = useState<string | null>(null)
@@ -46,9 +53,8 @@ export default function MLPipelineVisualization() {
   const nodes: FlowchartNode[] = [
     {
       id: "database",
-      label: "Full Time Series DB",
-      description:
-        "Complete historical time series data repository containing all available variables and their temporal patterns.",
+      label: t("nodes.database.label"),
+      description: t("nodes.database.description"),
       x: 350,
       y: 0,
       width: 200,
@@ -59,8 +65,12 @@ export default function MLPipelineVisualization() {
     },
     {
       id: "warmup-note",
-      label: `${isWarmup ? "During warmup: always random" : "After warmup: epsilon-greedy"}`,
-      description: `${isWarmup ? "During the warmup phase, the system always explores randomly to gather initial data." : "After warmup, the system uses epsilon-greedy strategy to balance exploration and exploitation."}`,
+      label: isWarmup
+        ? t("nodes.warmup-note.warmupLabel")
+        : t("nodes.warmup-note.activeLabel"),
+      description: isWarmup
+        ? t("nodes.warmup-note.warmupDesc")
+        : t("nodes.warmup-note.activeDesc"),
       x: 340,
       y: 140,
       width: 220,
@@ -71,8 +81,14 @@ export default function MLPipelineVisualization() {
     },
     {
       id: "decision",
-      label: `random(${randomValue.toFixed(3)}) < epsilon? ${randomValue < epsilonValue} `,
-      description: `Decision point: Random value ${randomValue.toFixed(3)} ${randomValue < epsilonValue ? "is less than" : "is greater than or equal to"} epsilon (${epsilonValue})`,
+      label: `${t("nodes.decision.label")}: random(${randomValue.toFixed(
+        3
+      )}) < epsilon? ${randomValue < epsilonValue}`,
+      description: `${t("nodes.decision.description")}: Random value ${randomValue.toFixed(
+        3
+      )} ${
+        randomValue < epsilonValue ? "is less than" : "is greater than or equal to"
+      } epsilon (${epsilonValue})`,
       x: 370,
       y: 240,
       width: 160,
@@ -82,9 +98,8 @@ export default function MLPipelineVisualization() {
     },
     {
       id: "introspector",
-      label: "Introspector G [Exploit: AI]",
-      description:
-        "Neural network that learns to select the most informative variables based on historical performance.",
+      label: t("nodes.introspector.label"),
+      description: t("nodes.introspector.description"),
       x: 150,
       y: 380,
       width: 180,
@@ -95,8 +110,8 @@ export default function MLPipelineVisualization() {
     },
     {
       id: "random-picker",
-      label: "Random Variable Picker",
-      description: "Randomly selects variables for exploration to discover potentially useful new combinations.",
+      label: t("nodes.random-picker.label"),
+      description: t("nodes.random-picker.description"),
       x: 570,
       y: 380,
       width: 180,
@@ -107,8 +122,8 @@ export default function MLPipelineVisualization() {
     },
     {
       id: "selected-vars",
-      label: "Selected Variables",
-      description: "The chosen set of variables from either exploitation or exploration strategy.",
+      label: t("nodes.selected-vars.label"),
+      description: t("nodes.selected-vars.description"),
       x: 350,
       y: 500,
       width: 160,
@@ -119,9 +134,8 @@ export default function MLPipelineVisualization() {
     },
     {
       id: "embedder",
-      label: "Series Embedder (with Metadata)",
-      description:
-        "Transforms selected time series variables into dense vector representations. Obtains: Embeddings of Selected Variables",
+      label: t("nodes.embedder.label"),
+      description: t("nodes.embedder.description"),
       x: 150,
       y: 600,
       width: 180,
@@ -132,8 +146,8 @@ export default function MLPipelineVisualization() {
     },
     {
       id: "forecasting",
-      label: "Forecasting Model",
-      description: "Random Forest regressors, custom Neural Networks, VARs, you name it. Outputs: Forecast Loss.",
+      label: t("nodes.forecasting.label"),
+      description: t("nodes.forecasting.description"),
       x: 570,
       y: 600,
       width: 180,
@@ -144,8 +158,8 @@ export default function MLPipelineVisualization() {
     },
     {
       id: "history",
-      label: "(Embeddings, Loss) → History Log",
-      description: "Stores embeddings and forecast loss for each iteration to enable metalearning updates.",
+      label: t("nodes.history.label"),
+      description: t("nodes.history.description"),
       x: 320,
       y: 740,
       width: 220,
@@ -156,8 +170,8 @@ export default function MLPipelineVisualization() {
     },
     {
       id: "iteration-check",
-      label: `every U iterations?`,
-      description: "Periodic check to determine when to perform metalearning updates to improve the system.",
+      label: t("nodes.iteration-check.label"),
+      description: t("nodes.iteration-check.description"),
       x: 370,
       y: 860,
       width: 120,
@@ -167,8 +181,8 @@ export default function MLPipelineVisualization() {
     },
     {
       id: "update",
-      label: "Update: Introspector G & Series Embedder",
-      description: "Meta-learning update using forecast performance to improve both components.",
+      label: t("nodes.update.label"),
+      description: t("nodes.update.description"),
       x: 310,
       y: 1000,
       width: 240,
@@ -179,6 +193,7 @@ export default function MLPipelineVisualization() {
     },
   ]
 
+
   const connections: Connection[] = [
     { from: "database", to: "warmup-note", isActive: currentStep >= 1 },
     { from: "warmup-note", to: "decision", isActive: currentStep >= 2 },
@@ -186,14 +201,14 @@ export default function MLPipelineVisualization() {
       from: "decision",
       to: "introspector",
       condition: "false",
-      label: "False",
+      label: t("connections.false"),
       isActive: currentStep >= 3 && !isExploring,
     },
     {
       from: "decision",
       to: "random-picker",
       condition: "true",
-      label: "True",
+      label: t("connections.true"),
       isActive: currentStep >= 3 && isExploring,
     },
     { from: "introspector", to: "selected-vars", isActive: currentStep >= 4 && !isExploring },
@@ -203,21 +218,28 @@ export default function MLPipelineVisualization() {
     { from: "embedder", to: "history", label: "Embeddings", isActive: currentStep >= 7 },
     { from: "forecasting", to: "history", label: "Forecast Loss", isActive: currentStep >= 7 },
     { from: "history", to: "iteration-check", isActive: currentStep >= 8 },
-    { from: "iteration-check", to: "update", condition: "true", label: "True", isActive: currentStep >= 9 },
+    {
+      from: "iteration-check",
+      to: "update",
+      condition: "true",
+      label: t("connections.true"),
+      isActive: currentStep >= 9,
+    },
     {
       from: "iteration-check",
       to: "warmup-note",
       condition: "false",
-      label: "False",
+      label: t("connections.false"),
       isActive: currentStep >= 8 && currentStep < 9,
     },
     {
       from: "update",
       to: "warmup-note",
-      label: "Meta-learning update using forecast performance",
+      label: t("connections.meta_update"),
       isActive: currentStep >= 9,
     },
   ]
+
 
   useEffect(() => {
     let interval: NodeJS.Timeout
@@ -341,8 +363,6 @@ export default function MLPipelineVisualization() {
   }
 
 
-
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-amber-50">
       {/* Header */}
@@ -351,13 +371,11 @@ export default function MLPipelineVisualization() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-indigo-700">
-                Time Series Forecasting Workflow
+                {t("title")}
               </h1>
-              <p className="text-slate-600">
-                Guided Variable Selection through Recursive Introspection
-              </p>
+              <p className="text-slate-600">{t("subtitle")}</p>
               <p className="text-sm text-gray-600 mt-1 font-[family-name:var(--font-dm-sans)]">
-                Andrew R. Garcia, PhD 2025
+                {t("author")}
               </p>
             </div>
             <div className="flex items-center gap-3">
@@ -367,12 +385,31 @@ export default function MLPipelineVisualization() {
                 size="lg"
                 className="shadow-md"
               >
-                {isPlaying ? <Pause className="w-5 h-5 mr-2" /> : <Play className="w-5 h-5 mr-2" />}
-                {isPlaying ? "Pause" : "Play"}
+                {isPlaying ? (
+                  <Pause className="w-5 h-5 mr-2" />
+                ) : (
+                  <Play className="w-5 h-5 mr-2" />
+                )}
+                {isPlaying ? t("controls.pause") : t("controls.play")}
               </Button>
-              <Button onClick={handleReset} variant="outline" size="lg" className="shadow-md bg-transparent">
+              <Button
+                onClick={handleReset}
+                variant="outline"
+                size="lg"
+                className="shadow-md bg-transparent"
+              >
                 <RotateCcw className="w-5 h-5 mr-2" />
-                Reset
+                {t("controls.reset")}
+              </Button>
+              <Button
+                onClick={toggleLang}
+                variant="outline"
+                size="lg"
+                className="shadow-md"
+              >
+                {i18n.language === "en"
+                  ? t("controls.lang.es")
+                  : t("controls.lang.en")}
               </Button>
             </div>
           </div>
@@ -433,129 +470,156 @@ export default function MLPipelineVisualization() {
     </div>
     {/* Side Panel */}
     <div className="space-y-6">
-      {/* Epsilon-Greedy Status */}
-        <Card className="p-4 shadow-lg bg-white/95">
-          <h3 className="font-bold mb-3 font-[family-name:var(--font-space-grotesk)] text-red-800">
-            Epsilon-Greedy Status
-          </h3>
-        <div className="space-y-3">
-          <div className="flex justify-between items-center">
-            <span className="text-sm font-medium">Phase:</span>
-            <Badge
-              variant="secondary"
-              className={`${isWarmup ? "bg-orange-100 text-orange-800" : "bg-green-100 text-green-800"}`}
-            >
-              {isWarmup ? "🔥 WARMUP" : "🎯 ACTIVE"}
-            </Badge>
-          </div>
-          <div className="flex justify-between items-center">
-            <span className="text-sm font-medium">Epsilon (ε):</span>
-            <Badge variant="secondary" className="bg-amber-100 text-amber-800">
-              {(epsilonValue * 100).toFixed(0)}%
-            </Badge>
-          </div>
-          <div className="flex justify-between items-center">
-            <span className="text-sm font-medium">Random Value:</span>
-            <Badge
-              variant="outline"
-              className={`${randomValue < epsilonValue ? "bg-green-100 text-green-800" : "bg-blue-100 text-blue-800"}`}
-            >
-              {randomValue.toFixed(3)}
-            </Badge>
-          </div>
-          <div className="flex justify-between items-center">
-            <span className="text-sm font-medium">Strategy:</span>
-            <Badge className={`${isExploring ? "bg-green-500" : "bg-blue-500"}`}>
-              {isExploring ? "🎲 EXPLORE" : "🧠 EXPLOIT"}
-            </Badge>
-          </div>
-          <div className="text-xs text-gray-600 mt-2 p-2 bg-gray-50 rounded">
-            {isWarmup
-              ? "Warmup phase: Always exploring randomly"
-              : isExploring
-                ? `${randomValue.toFixed(3)} < ${epsilonValue} → Explore randomly`
-                : `${randomValue.toFixed(3)} ≥ ${epsilonValue} → Exploit best variables`}
-          </div>
+    {/* Epsilon-Greedy Status */}
+    <Card className="p-4 shadow-lg bg-white/95">
+      <h3 className="font-bold mb-3 font-[family-name:var(--font-space-grotesk)] text-red-800">
+        {t("epsilon_status")}
+      </h3>
+      <div className="space-y-3">
+        <div className="flex justify-between items-center">
+          <span className="text-sm font-medium">{t("phase")}:</span>
+          <Badge
+            variant="secondary"
+            className={`${
+              isWarmup
+                ? "bg-orange-100 text-orange-800"
+                : "bg-green-100 text-green-800"
+            }`}
+          >
+            {isWarmup ? t("warmup") : t("active")}
+          </Badge>
         </div>
-      </Card>
+        <div className="flex justify-between items-center">
+          <span className="text-sm font-medium">{t("epsilon")}:</span>
+          <Badge variant="secondary" className="bg-amber-100 text-amber-800">
+            {(epsilonValue * 100).toFixed(0)}%
+          </Badge>
+        </div>
+        <div className="flex justify-between items-center">
+          <span className="text-sm font-medium">{t("random_value")}:</span>
+          <Badge
+            variant="outline"
+            className={`${
+              randomValue < epsilonValue
+                ? "bg-green-100 text-green-800"
+                : "bg-blue-100 text-blue-800"
+            }`}
+          >
+            {randomValue.toFixed(3)}
+          </Badge>
+        </div>
+        <div className="flex justify-between items-center">
+          <span className="text-sm font-medium">{t("strategy")}:</span>
+          <Badge className={`${isExploring ? "bg-green-500" : "bg-blue-500"}`}>
+            {isExploring ? t("explore") : t("exploit")}
+          </Badge>
+        </div>
 
-      {/* Progress */}
-      <Card className="p-4 shadow-lg bg-white/95">
-          <h3 className="font-bold mb-3 font-[family-name:var(--font-space-grotesk)] text-red-800">Progress</h3>
+        {/* the explanatory box goes here */}
+        <div className="text-xs text-gray-600 mt-2 p-2 bg-gray-50 rounded">
+          {isWarmup
+            ? t("epsilon_expl.warmup")
+            : isExploring
+              ? t("epsilon_expl.explore", {
+                  value: randomValue.toFixed(3),
+                  epsilon: epsilonValue,
+                })
+              : t("epsilon_expl.exploit", {
+                  value: randomValue.toFixed(3),
+                  epsilon: epsilonValue,
+                })}
+        </div>
+      </div>
+    </Card>
+
+
+    {/* Progress */}
+    <Card className="p-4 shadow-lg bg-white/95">
+      <h3 className="font-bold mb-3 font-[family-name:var(--font-space-grotesk)] text-red-800">
+        {t("progress")}
+      </h3>
+      <div className="space-y-2">
+        <div className="flex justify-between text-sm">
+          <span>{t("step", { current: currentStep + 1, total: 11 })}</span>
+          <span>{Math.round(((currentStep + 1) / 11) * 100)}%</span>
+        </div>
+        <div className="w-full bg-gray-200 rounded-full h-3">
+          <div
+            className="bg-gradient-to-r from-red-500 to-amber-500 h-3 rounded-full transition-all duration-500"
+            style={{ width: `${((currentStep + 1) / 11) * 100}%` }}
+          />
+        </div>
+      </div>
+    </Card>
+
+    {/* Current Step */}
+    <Card className="p-4 shadow-lg bg-white/95">
+      <h3 className="font-bold mb-3 font-[family-name:var(--font-space-grotesk)] text-red-800">
+        {t("current_step")}
+      </h3>
+      {currentStep < nodes.length ? (
         <div className="space-y-2">
-          <div className="flex justify-between text-sm">
-            <span>Step {currentStep + 1} of 11</span>
-            <span>{Math.round(((currentStep + 1) / 11) * 100)}%</span>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-3">
-            <div
-              className="bg-gradient-to-r from-red-500 to-amber-500 h-3 rounded-full transition-all duration-500"
-              style={{ width: `${((currentStep + 1) / 11) * 100}%` }}
-            />
-          </div>
-        </div>
-      </Card>
-
-      <Card className="p-4 shadow-lg bg-white/95">
-        <h3 className="font-bold mb-3 font-[family-name:var(--font-space-grotesk)] text-red-800">Current Step</h3>
-        {currentStep < nodes.length ? (
-          <div className="space-y-2">
-            <Badge variant="secondary" className="bg-red-100 text-red-800">
-              {nodes[currentStep]?.label}
-            </Badge>
-            <p className="text-sm text-gray-700 font-[family-name:var(--font-dm-sans)]">
-              {nodes[currentStep]?.description}
-            </p>
-          </div>
-        ) : (
+          <Badge variant="secondary" className="bg-red-100 text-red-800">
+            {nodes[currentStep]?.label}
+          </Badge>
           <p className="text-sm text-gray-700 font-[family-name:var(--font-dm-sans)]">
-            Pipeline complete! The system continues iterating to improve performance through metalearning.
+            {nodes[currentStep]?.description}
           </p>
-        )}
-      </Card>
-
-      {/* Node Details */}
-      {selectedNode && (
-        <Card className="p-4 shadow-lg bg-white/95">
-          <h3 className="font-bold mb-3 font-[family-name:var(--font-space-grotesk)] text-red-800">
-            Node Details
-          </h3>
-          {(() => {
-            const node = nodes.find((n) => n.id === selectedNode)
-            return node ? (
-              <div className="space-y-2">
-                <Badge variant="outline" className="border-red-300 text-red-800">
-                  {node.label}
-                </Badge>
-                <p className="text-sm text-gray-700 font-[family-name:var(--font-dm-sans)]">{node.description}</p>
-              </div>
-            ) : null
-          })()}
-        </Card>
-      )}
-
-      {/* Legend */}
-      <Card className="p-4 shadow-lg bg-white/95">
-        <h3 className="font-bold mb-3 font-[family-name:var(--font-space-grotesk)] text-red-800">Legend</h3>
-        <div className="space-y-2 text-sm">
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-red-100 border border-red-300 rounded"></div>
-            <span>Process</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-amber-100 border border-amber-300 rounded"></div>
-            <span>Data Store</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-blue-100 border border-blue-400 rounded transform rotate-45"></div>
-            <span>Decision (Exploit)</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-green-100 border border-green-400 rounded transform rotate-45"></div>
-            <span>Decision (Explore)</span>
-          </div>
         </div>
+      ) : (
+        <p className="text-sm text-gray-700 font-[family-name:var(--font-dm-sans)]">
+          {t("complete")}
+        </p>
+      )}
+    </Card>
+
+    {/* Node Details */}
+    {selectedNode && (
+      <Card className="p-4 shadow-lg bg-white/95">
+        <h3 className="font-bold mb-3 font-[family-name:var(--font-space-grotesk)] text-red-800">
+          {t("node_details")}
+        </h3>
+        {(() => {
+          const node = nodes.find((n) => n.id === selectedNode)
+          return node ? (
+            <div className="space-y-2">
+              <Badge variant="outline" className="border-red-300 text-red-800">
+                {node.label}
+              </Badge>
+              <p className="text-sm text-gray-700 font-[family-name:var(--font-dm-sans)]">
+                {node.description}
+              </p>
+            </div>
+          ) : null
+        })()}
       </Card>
+    )}
+
+    {/* Legend */}
+    <Card className="p-4 shadow-lg bg-white/95">
+      <h3 className="font-bold mb-3 font-[family-name:var(--font-space-grotesk)] text-red-800">
+        {t("legend")}
+      </h3>
+      <div className="space-y-2 text-sm">
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 bg-red-100 border border-red-300 rounded"></div>
+          <span>{t("legend_items.process")}</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 bg-amber-100 border border-amber-300 rounded"></div>
+          <span>{t("legend_items.data")}</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 bg-blue-100 border border-blue-400 rounded transform rotate-45"></div>
+          <span>{t("legend_items.decision_exploit")}</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 bg-green-100 border border-green-400 rounded transform rotate-45"></div>
+          <span>{t("legend_items.decision_explore")}</span>
+        </div>
+      </div>
+    </Card>
+
     </div>
   </div>
 </main>

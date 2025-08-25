@@ -1,6 +1,7 @@
 import type React from "react"
 import type { Metadata } from "next"
 import { Space_Grotesk, DM_Sans } from "next/font/google"
+import { Providers } from "./providers"
 import "./globals.css"
 
 const spaceGrotesk = Space_Grotesk({
@@ -28,7 +29,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${spaceGrotesk.variable} ${dmSans.variable} antialiased`}>
-      <body className="font-sans">{children}</body>
+      <body className="font-sans">
+                <Providers>{children}</Providers>
+    </body>
     </html>
   )
 }
+
