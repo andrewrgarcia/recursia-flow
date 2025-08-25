@@ -34,11 +34,15 @@ export default function MLPipelineVisualization() {
   const [isPlaying, setIsPlaying] = useState(false)
   const [selectedNode, setSelectedNode] = useState<string | null>(null)
   const [randomValue, setRandomValue] = useState(0.5)
-  const [epsilonValue] = useState(0.4) // 40% epsilon as requested
+  const [epsilonValue] = useState(0.4)
   const [isExploring, setIsExploring] = useState(false)
   const [iterationCount, setIterationCount] = useState(1)
   const [isWarmup, setIsWarmup] = useState(true)
 
+  const BASE_W = 900
+  const BASE_H = 1200
+
+  // example nodes (you can add the rest back in the same style)
   const nodes: FlowchartNode[] = [
     {
       id: "database",
@@ -375,196 +379,201 @@ export default function MLPipelineVisualization() {
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid lg:grid-cols-4 gap-8">
-          {/* Main Flowchart */}
-          <div className="lg:col-span-3">
-            <Card className="p-6 shadow-xl bg-white/95 backdrop-blur-sm">
-              <div className="relative overflow-auto" style={{ height: "900px" }}>
-                <svg width="900" height="1200" className="absolute inset-0">
-                  <defs>
-                    <marker id="arrowhead" markerWidth="12" markerHeight="8" refX="11" refY="4" orient="auto">
-                      <polygon points="0 0, 12 4, 0 8" fill="#ff0000ff" />
-                    </marker>
-                    <linearGradient id="activeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#dc2626" />
-                      <stop offset="100%" stopColor="#b91c1c" />
-                    </linearGradient>
-                  </defs>
+<main className="container mx-auto px-4 py-6">
+  <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+    {/* Flowchart */}
+    <div className="lg:col-span-3">
+      <Card className="p-4 shadow-xl bg-white/95">
+        <div className="relative w-full">
+          <svg
+            viewBox={`0 0 ${BASE_W} ${BASE_H}`}
+            className="w-full h-auto"
+            preserveAspectRatio="xMidYMid meet"
+          >
+            <defs>
+              <marker id="arrowhead" markerWidth="12" markerHeight="8" refX="11" refY="4" orient="auto">
+                <polygon points="0 0, 12 4, 0 8" fill="#ff0000ff" />
+              </marker>
+                <linearGradient id="activeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#dc2626" />
+                  <stop offset="100%" stopColor="#b91c1c" />
+                </linearGradient>
+                </defs>
+            {connections.map(renderConnection)}
+          </svg>
 
-                  {connections.map(renderConnection)}
-                </svg>
-
-                {nodes.map((node) => (
-                  <div
-                    key={node.id}
-                    className={`absolute rounded-xl border-2 p-4 cursor-pointer transition-all duration-500 hover:scale-105 ${getNodeColor(node)} ${
-                      node.isActive ? "animate-fadeInUp" : "opacity-30"
-                    }`}
-                    style={{
-                      left: node.x,
-                      top: node.y,
-                      width: node.width,
-                      height: node.height,
-                      transform: node.type === "decision" ? "rotate(45deg)" : "none",
-                      boxShadow: node.isActive ? "0 8px 25px rgba(0,0,0,0.15)" : "none",
-                    }}
-                    onClick={() => setSelectedNode(selectedNode === node.id ? null : node.id)}
-                  >
-                    <div
-                      className={`flex items-center gap-2 text-center justify-center h-full ${node.type === "decision" ? "transform -rotate-45" : ""}`}
-                    >
-                      {node.icon}
-                      <span className="text-sm font-bold font-[family-name:var(--font-space-grotesk)] leading-tight">
-                        {node.label}
-                      </span>
-                    </div>
-                  </div>
-                ))}
+          {nodes.map((node) => (
+              <div
+              key={node.id}
+              className={`absolute rounded-xl border-2 p-4 cursor-pointer transition-all duration-500 hover:scale-105 ${getNodeColor(node)} ${
+                node.isActive ? "animate-fadeInUp" : "opacity-30"
+              }`}
+              style={{
+                left: `${(node.x / BASE_W) * 100}%`,
+                top: `${(node.y / BASE_H) * 100}%`,
+                width: `${(node.width / BASE_W) * 100}%`,
+                height: `${(node.height / BASE_H) * 100}%`,
+                transform: node.type === "decision" ? "rotate(45deg)" : "none",
+                boxShadow: node.isActive ? "0 8px 25px rgba(0,0,0,0.15)" : "none",
+              }}
+              onClick={() => setSelectedNode(selectedNode === node.id ? null : node.id)}
+            >
+              <div
+                className={`flex items-center gap-2 text-center justify-center h-full ${node.type === "decision" ? "transform -rotate-45" : ""}`}
+              >
+                {node.icon}
+                <span className="text-sm font-bold font-[family-name:var(--font-space-grotesk)] leading-tight">
+                  {node.label}
+                </span>
               </div>
-            </Card>
+            </div>
+          ))}
+        </div>
+      </Card>
+    </div>
+    {/* Side Panel */}
+    <div className="space-y-6">
+      {/* Epsilon-Greedy Status */}
+        <Card className="p-4 shadow-lg bg-white/95">
+          <h3 className="font-bold mb-3 font-[family-name:var(--font-space-grotesk)] text-red-800">
+            Epsilon-Greedy Status
+          </h3>
+        <div className="space-y-3">
+          <div className="flex justify-between items-center">
+            <span className="text-sm font-medium">Phase:</span>
+            <Badge
+              variant="secondary"
+              className={`${isWarmup ? "bg-orange-100 text-orange-800" : "bg-green-100 text-green-800"}`}
+            >
+              {isWarmup ? "🔥 WARMUP" : "🎯 ACTIVE"}
+            </Badge>
           </div>
-
-          {/* Side Panel */}
-          <div className="space-y-6">
-            <Card className="p-4 shadow-lg bg-white/95">
-              <h3 className="font-bold mb-3 font-[family-name:var(--font-space-grotesk)] text-red-800">
-                Epsilon-Greedy Status
-              </h3>
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium">Phase:</span>
-                  <Badge
-                    variant="secondary"
-                    className={`${isWarmup ? "bg-orange-100 text-orange-800" : "bg-green-100 text-green-800"}`}
-                  >
-                    {isWarmup ? "🔥 WARMUP" : "🎯 ACTIVE"}
-                  </Badge>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium">Epsilon (ε):</span>
-                  <Badge variant="secondary" className="bg-amber-100 text-amber-800">
-                    {(epsilonValue * 100).toFixed(0)}%
-                  </Badge>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium">Random Value:</span>
-                  <Badge
-                    variant="outline"
-                    className={`${randomValue < epsilonValue ? "bg-green-100 text-green-800" : "bg-blue-100 text-blue-800"}`}
-                  >
-                    {randomValue.toFixed(3)}
-                  </Badge>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium">Strategy:</span>
-                  <Badge className={`${isExploring ? "bg-green-500" : "bg-blue-500"}`}>
-                    {isExploring ? "🎲 EXPLORE" : "🧠 EXPLOIT"}
-                  </Badge>
-                </div>
-                <div className="text-xs text-gray-600 mt-2 p-2 bg-gray-50 rounded">
-                  {isWarmup
-                    ? "Warmup phase: Always exploring randomly"
-                    : isExploring
-                      ? `${randomValue.toFixed(3)} < ${epsilonValue} → Explore randomly`
-                      : `${randomValue.toFixed(3)} ≥ ${epsilonValue} → Exploit best variables`}
-                </div>
-              </div>
-            </Card>
-
-            <Card className="p-4 shadow-lg bg-white/95">
-              <h3 className="font-bold mb-3 font-[family-name:var(--font-space-grotesk)] text-red-800">Progress</h3>
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span>Step {currentStep + 1} of 11</span>
-                  <span>{Math.round(((currentStep + 1) / 11) * 100)}%</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-3">
-                  <div
-                    className="bg-gradient-to-r from-red-500 to-amber-500 h-3 rounded-full transition-all duration-500"
-                    style={{ width: `${((currentStep + 1) / 11) * 100}%` }}
-                  />
-                </div>
-              </div>
-            </Card>
-
-            <Card className="p-4 shadow-lg bg-white/95">
-              <h3 className="font-bold mb-3 font-[family-name:var(--font-space-grotesk)] text-red-800">Current Step</h3>
-              {currentStep < nodes.length ? (
-                <div className="space-y-2">
-                  <Badge variant="secondary" className="bg-red-100 text-red-800">
-                    {nodes[currentStep]?.label}
-                  </Badge>
-                  <p className="text-sm text-gray-700 font-[family-name:var(--font-dm-sans)]">
-                    {nodes[currentStep]?.description}
-                  </p>
-                </div>
-              ) : (
-                <p className="text-sm text-gray-700 font-[family-name:var(--font-dm-sans)]">
-                  Pipeline complete! The system continues iterating to improve performance through metalearning.
-                </p>
-              )}
-            </Card>
-
-            {selectedNode && (
-              <Card className="p-4 shadow-lg bg-white/95">
-                <h3 className="font-bold mb-3 font-[family-name:var(--font-space-grotesk)] text-red-800">
-                  Node Details
-                </h3>
-                {(() => {
-                  const node = nodes.find((n) => n.id === selectedNode)
-                  return node ? (
-                    <div className="space-y-2">
-                      <Badge variant="outline" className="border-red-300 text-red-800">
-                        {node.label}
-                      </Badge>
-                      <p className="text-sm text-gray-700 font-[family-name:var(--font-dm-sans)]">{node.description}</p>
-                    </div>
-                  ) : null
-                })()}
-              </Card>
-            )}
-
-            <Card className="p-4 shadow-lg bg-white/95">
-              <h3 className="font-bold mb-3 font-[family-name:var(--font-space-grotesk)] text-red-800">Legend</h3>
-              <div className="space-y-2 text-sm">
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 bg-red-100 border border-red-300 rounded"></div>
-                  <span>Process</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 bg-amber-100 border border-amber-300 rounded"></div>
-                  <span>Data Store</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 bg-blue-100 border border-blue-400 rounded transform rotate-45"></div>
-                  <span>Decision (Exploit)</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 bg-green-100 border border-green-400 rounded transform rotate-45"></div>
-                  <span>Decision (Explore)</span>
-                </div>
-              </div>
-            </Card>
+          <div className="flex justify-between items-center">
+            <span className="text-sm font-medium">Epsilon (ε):</span>
+            <Badge variant="secondary" className="bg-amber-100 text-amber-800">
+              {(epsilonValue * 100).toFixed(0)}%
+            </Badge>
+          </div>
+          <div className="flex justify-between items-center">
+            <span className="text-sm font-medium">Random Value:</span>
+            <Badge
+              variant="outline"
+              className={`${randomValue < epsilonValue ? "bg-green-100 text-green-800" : "bg-blue-100 text-blue-800"}`}
+            >
+              {randomValue.toFixed(3)}
+            </Badge>
+          </div>
+          <div className="flex justify-between items-center">
+            <span className="text-sm font-medium">Strategy:</span>
+            <Badge className={`${isExploring ? "bg-green-500" : "bg-blue-500"}`}>
+              {isExploring ? "🎲 EXPLORE" : "🧠 EXPLOIT"}
+            </Badge>
+          </div>
+          <div className="text-xs text-gray-600 mt-2 p-2 bg-gray-50 rounded">
+            {isWarmup
+              ? "Warmup phase: Always exploring randomly"
+              : isExploring
+                ? `${randomValue.toFixed(3)} < ${epsilonValue} → Explore randomly`
+                : `${randomValue.toFixed(3)} ≥ ${epsilonValue} → Exploit best variables`}
           </div>
         </div>
-      </div>
+      </Card>
 
-      <style jsx>{`
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        .animate-fadeInUp {
-          animation: fadeInUp 0.6s ease-out;
-        }
-      `}</style>
+      {/* Progress */}
+      <Card className="p-4 shadow-lg bg-white/95">
+          <h3 className="font-bold mb-3 font-[family-name:var(--font-space-grotesk)] text-red-800">Progress</h3>
+        <div className="space-y-2">
+          <div className="flex justify-between text-sm">
+            <span>Step {currentStep + 1} of 11</span>
+            <span>{Math.round(((currentStep + 1) / 11) * 100)}%</span>
+          </div>
+          <div className="w-full bg-gray-200 rounded-full h-3">
+            <div
+              className="bg-gradient-to-r from-red-500 to-amber-500 h-3 rounded-full transition-all duration-500"
+              style={{ width: `${((currentStep + 1) / 11) * 100}%` }}
+            />
+          </div>
+        </div>
+      </Card>
+
+      <Card className="p-4 shadow-lg bg-white/95">
+        <h3 className="font-bold mb-3 font-[family-name:var(--font-space-grotesk)] text-red-800">Current Step</h3>
+        {currentStep < nodes.length ? (
+          <div className="space-y-2">
+            <Badge variant="secondary" className="bg-red-100 text-red-800">
+              {nodes[currentStep]?.label}
+            </Badge>
+            <p className="text-sm text-gray-700 font-[family-name:var(--font-dm-sans)]">
+              {nodes[currentStep]?.description}
+            </p>
+          </div>
+        ) : (
+          <p className="text-sm text-gray-700 font-[family-name:var(--font-dm-sans)]">
+            Pipeline complete! The system continues iterating to improve performance through metalearning.
+          </p>
+        )}
+      </Card>
+
+      {/* Node Details */}
+      {selectedNode && (
+        <Card className="p-4 shadow-lg bg-white/95">
+          <h3 className="font-bold mb-3 font-[family-name:var(--font-space-grotesk)] text-red-800">
+            Node Details
+          </h3>
+          {(() => {
+            const node = nodes.find((n) => n.id === selectedNode)
+            return node ? (
+              <div className="space-y-2">
+                <Badge variant="outline" className="border-red-300 text-red-800">
+                  {node.label}
+                </Badge>
+                <p className="text-sm text-gray-700 font-[family-name:var(--font-dm-sans)]">{node.description}</p>
+              </div>
+            ) : null
+          })()}
+        </Card>
+      )}
+
+      {/* Legend */}
+      <Card className="p-4 shadow-lg bg-white/95">
+        <h3 className="font-bold mb-3 font-[family-name:var(--font-space-grotesk)] text-red-800">Legend</h3>
+        <div className="space-y-2 text-sm">
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 bg-red-100 border border-red-300 rounded"></div>
+            <span>Process</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 bg-amber-100 border border-amber-300 rounded"></div>
+            <span>Data Store</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 bg-blue-100 border border-blue-400 rounded transform rotate-45"></div>
+            <span>Decision (Exploit)</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 bg-green-100 border border-green-400 rounded transform rotate-45"></div>
+            <span>Decision (Explore)</span>
+          </div>
+        </div>
+      </Card>
     </div>
-  )
+  </div>
+</main>
+<style jsx>{`
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .animate-fadeInUp {
+    animation: fadeInUp 0.6s ease-out;
+  }
+`}</style>
+</div>
+)
 }
