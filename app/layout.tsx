@@ -17,8 +17,8 @@ const dmSans = DM_Sans({
 })
 
 export const metadata: Metadata = {
-  title: "ML Pipeline Visualization",
-  description: "Interactive visualization of epsilon-greedy time series forecasting pipeline",
+  title: "Metalearning System for Variable Selection - TS Forecasting",
+  description: "Interactive visualization of recursive introspection based time series forecasting pipeline",
   generator: "v0.app",
 }
 
