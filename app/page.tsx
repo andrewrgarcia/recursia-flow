@@ -6,7 +6,7 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Play, Pause, RotateCcw, Brain, Database, TrendingUp, Shuffle } from "lucide-react"
+import { Play, Pause, RotateCcw, Brain, Database, TrendingUp, Shuffle, CoffeeIcon } from "lucide-react"
 
 interface FlowchartNode {
   id: string
@@ -46,7 +46,7 @@ export default function MLPipelineVisualization() {
       description:
         "Complete historical time series data repository containing all available variables and their temporal patterns.",
       x: 350,
-      y: 30,
+      y: 0,
       width: 200,
       height: 60,
       type: "data",
@@ -57,13 +57,13 @@ export default function MLPipelineVisualization() {
       id: "warmup-note",
       label: `${isWarmup ? "During warmup: always random" : "After warmup: epsilon-greedy"}`,
       description: `${isWarmup ? "During the warmup phase, the system always explores randomly to gather initial data." : "After warmup, the system uses epsilon-greedy strategy to balance exploration and exploitation."}`,
-      x: 350,
+      x: 340,
       y: 140,
       width: 220,
       height: 50,
       type: "process",
       isActive: currentStep >= 1,
-      icon: <Brain className="w-4 h-4" />,
+      icon: <CoffeeIcon className="h-9" />,
     },
     {
       id: "decision",
@@ -87,7 +87,7 @@ export default function MLPipelineVisualization() {
       height: 70,
       type: "process",
       isActive: currentStep >= 3 && !isExploring,
-      icon: <Brain className="w-5 h-5" />,
+      icon: <Brain className="h-9" />,
     },
     {
       id: "random-picker",
@@ -111,7 +111,7 @@ export default function MLPipelineVisualization() {
       height: 50,
       type: "data",
       isActive: currentStep >= 4,
-      icon: <Database className="w-4 h-4" />,
+      icon: <Database className="h-6" />,
     },
     {
       id: "embedder",
@@ -124,12 +124,12 @@ export default function MLPipelineVisualization() {
       height: 80,
       type: "process",
       isActive: currentStep >= 5,
-      icon: <TrendingUp className="w-5 h-5" />,
+      icon: <Brain className="h-9" />,
     },
     {
       id: "forecasting",
-      label: "Forecasting Model (VAR / RF / NN)",
-      description: "VAR, Random Forest, or Neural Network model that generates predictions. Obtained: Forecast Loss",
+      label: "Forecasting Model",
+      description: "Random Forest regressors, custom Neural Networks, VARs, you name it. Outputs: Forecast Loss.",
       x: 570,
       y: 600,
       width: 180,
@@ -165,7 +165,7 @@ export default function MLPipelineVisualization() {
       id: "update",
       label: "Update: Introspector G & Series Embedder",
       description: "Meta-learning update using forecast performance to improve both components.",
-      x: 280,
+      x: 310,
       y: 1000,
       width: 240,
       height: 80,
@@ -287,15 +287,36 @@ export default function MLPipelineVisualization() {
     const toX = toNode.x + toNode.width / 2
     const toY = toNode.y
 
+    // Horizontal offset to push elbows outward
+    const offsetX = Math.max(150, Math.abs(toX - fromX) / 2)
+
+    let pathD: string
+
+    if (toY >= fromY) {
+      // Normal forward flow: downwards
+      pathD = `
+        M ${fromX} ${fromY}
+        L ${fromX} ${(fromY + toY) / 2}
+        L ${toX} ${(fromY + toY) / 2}
+        L ${toX} ${toY}
+      `
+    } else {
+      // Feedback loop: goes upward
+      pathD = `
+        M ${fromX} ${fromY}
+        L ${fromX + offsetX} ${fromY}
+        L ${fromX + offsetX} ${toY}
+        L ${toX} ${toY}
+      `
+    }
+
     return (
       <g key={`${conn.from}-${conn.to}`}>
-        <line
-          x1={fromX}
-          y1={fromY}
-          x2={toX}
-          y2={toY}
-          stroke={conn.isActive ? "#dc2626" : "#9ca3af"}
-          strokeWidth={conn.isActive ? "3" : "2"}
+        <path
+          d={pathD}
+          fill="none"
+          stroke={conn.isActive ? "#ff0000ff" : "#94a3b8"}  // indigo active, slate muted
+          strokeWidth={conn.isActive ? 3 : 2}
           className={conn.isActive ? "animate-pulse" : ""}
           markerEnd="url(#arrowhead)"
           strokeDasharray={conn.isActive ? "0" : "5,5"}
@@ -311,16 +332,12 @@ export default function MLPipelineVisualization() {
             {conn.label}
           </text>
         )}
-        {conn.isActive && (
-          <circle r="3" fill="#dc2626" className="animate-ping">
-            <animateMotion dur="2s" repeatCount="indefinite">
-              <mpath href={`#path-${conn.from}-${conn.to}`} />
-            </animateMotion>
-          </circle>
-        )}
       </g>
     )
   }
+
+
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-amber-50">
@@ -329,10 +346,10 @@ export default function MLPipelineVisualization() {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-red-800 font-[family-name:var(--font-space-grotesk)]">
+              <h1 className="text-3xl font-bold text-indigo-700">
                 Time Series Forecasting Workflow
               </h1>
-              <p className="text-amber-700 font-[family-name:var(--font-dm-sans)] text-lg">
+              <p className="text-slate-600">
                 Guided Variable Selection through Recursive Introspection
               </p>
               <p className="text-sm text-gray-600 mt-1 font-[family-name:var(--font-dm-sans)]">
@@ -367,7 +384,7 @@ export default function MLPipelineVisualization() {
                 <svg width="900" height="1200" className="absolute inset-0">
                   <defs>
                     <marker id="arrowhead" markerWidth="12" markerHeight="8" refX="11" refY="4" orient="auto">
-                      <polygon points="0 0, 12 4, 0 8" fill="#dc2626" />
+                      <polygon points="0 0, 12 4, 0 8" fill="#ff0000ff" />
                     </marker>
                     <linearGradient id="activeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
                       <stop offset="0%" stopColor="#dc2626" />
