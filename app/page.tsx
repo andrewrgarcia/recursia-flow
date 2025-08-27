@@ -256,6 +256,14 @@ export default function MLPipelineVisualization() {
     return () => window.removeEventListener("resize", handleResize)
   }, [])
 
+  useEffect(() => {
+    const alreadyShown = sessionStorage.getItem("orientationPopupShown")
+
+    if (!alreadyShown && window.innerWidth < 768) {
+      setShowPopup(true)
+      sessionStorage.setItem("orientationPopupShown", "true")
+    }
+  }, [])
 
   useEffect(() => {
     let interval: NodeJS.Timeout
