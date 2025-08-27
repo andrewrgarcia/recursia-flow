@@ -12,11 +12,7 @@
     }
   },
 
-  "popup": {
-    "title": "Phone version",
-    "message": "Put your phone in <strong>landscape</strong> orientation",
-    "button": "Got it"
-  },
+  "orientation_note": "Smartphone detected — for the best experience, view in landscape orientation and use the button to minimize the header.",
 
   "nodes": {
     "database": {

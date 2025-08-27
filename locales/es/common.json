@@ -12,11 +12,7 @@
     }
   },
 
-  "popup": {
-    "title": "Versión móvil",
-    "message": "Coloca tu teléfono en <strong>horizontal</strong>",
-    "button": "Entendido"
-  },
+  "orientation_note": "Smartphone detectado — usa la orientación horizontal y minimiza el encabezado con el botón.",
 
   "nodes": {
     "database": {

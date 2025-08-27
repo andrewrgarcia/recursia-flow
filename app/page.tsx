@@ -45,7 +45,6 @@ export default function MLPipelineVisualization() {
   const [isExploring, setIsExploring] = useState(false)
   const [iterationCount, setIterationCount] = useState(1)
   const [isWarmup, setIsWarmup] = useState(true)
-  const [showPopup, setShowPopup] = useState(false)
   const [isHeaderMinimized, setIsHeaderMinimized] = useState(false)
 
   const BASE_W = 900
@@ -243,29 +242,6 @@ export default function MLPipelineVisualization() {
   ]
 
   useEffect(() => {
-    // Show popup only if screen width is small (phone)
-    const handleResize = () => {
-      if (window.innerWidth < 768) {
-        setShowPopup(true)
-      } else {
-        setShowPopup(false)
-      }
-    }
-    handleResize()
-    window.addEventListener("resize", handleResize)
-    return () => window.removeEventListener("resize", handleResize)
-  }, [])
-
-  useEffect(() => {
-    const alreadyShown = sessionStorage.getItem("orientationPopupShown")
-
-    if (!alreadyShown && window.innerWidth < 768) {
-      setShowPopup(true)
-      sessionStorage.setItem("orientationPopupShown", "true")
-    }
-  }, [])
-
-  useEffect(() => {
     let interval: NodeJS.Timeout
     if (isPlaying && currentStep < 10) {
       interval = setInterval(() => {
@@ -389,25 +365,6 @@ export default function MLPipelineVisualization() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-amber-50">
-      {/* --- Phone Orientation Popup --- */}
-      {showPopup && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999]">
-          <div className="bg-white rounded-xl p-6 shadow-2xl text-center max-w-xs">
-            <Smartphone className="mx-auto w-12 h-12 text-indigo-600 mb-3 transform rotate-90" />
-
-            <h2 className="text-lg font-bold mb-2">{t("popup.title")}</h2>
-            <p
-              className="text-sm text-gray-700 mb-4"
-              dangerouslySetInnerHTML={{ __html: t("popup.message") }}
-            />
-            <Button variant="default" onClick={() => setShowPopup(false)}>
-              {t("popup.button")}
-            </Button>
-          </div>
-        </div>
-      )}
-
-
       {/* Header */}
       <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50 shadow-sm transition-all">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -420,8 +377,15 @@ export default function MLPipelineVisualization() {
               <p className="text-sm text-gray-600 mt-1 font-[family-name:var(--font-dm-sans)]">
                 {t("author")}
               </p>
+
+              {/* Mobile-only orientation note */}
+              <p className="text-xs text-amber-700 font-semibold mt-2 flex items-center gap-1 md:hidden">
+                <Smartphone className="w-4 h-4 transform rotate-90" />
+                {t("orientation_note")}
+              </p>
             </div>
           )}
+
 
           {/* Right side (always visible controls) */}
           <div className="flex items-center gap-3">
