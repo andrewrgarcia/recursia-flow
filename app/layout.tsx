@@ -18,7 +18,8 @@ const dmSans = DM_Sans({
 
 export const metadata: Metadata = {
   title: "Metalearning System for Variable Selection - TS Forecasting",
-  description: "Interactive visualization of recursive introspection based time series forecasting pipeline",
+  description:
+    "Interactive visualization of recursive introspection based time series forecasting pipeline",
   generator: "v0.app",
 }
 
@@ -30,9 +31,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${spaceGrotesk.variable} ${dmSans.variable} antialiased`}>
       <body className="font-sans">
-                <Providers>{children}</Providers>
-    </body>
+        {/* Wrap app in Providers (Language + I18n) */}
+        <Providers>{children}</Providers>
+      </body>
     </html>
   )
 }
-

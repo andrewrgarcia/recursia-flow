@@ -6,7 +6,7 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Play, Pause, RotateCcw, Brain, Database, TrendingUp, Shuffle, CoffeeIcon } from "lucide-react"
+import { Play, Pause, RotateCcw, Brain, Database, TrendingUp, Shuffle, CoffeeIcon, Smartphone } from "lucide-react"
 import { useTranslation } from "react-i18next"
 
 interface FlowchartNode {
@@ -45,6 +45,8 @@ export default function MLPipelineVisualization() {
   const [isExploring, setIsExploring] = useState(false)
   const [iterationCount, setIterationCount] = useState(1)
   const [isWarmup, setIsWarmup] = useState(true)
+  const [showPopup, setShowPopup] = useState(false)
+  const [isHeaderMinimized, setIsHeaderMinimized] = useState(false)
 
   const BASE_W = 900
   const BASE_H = 1200
@@ -240,6 +242,20 @@ export default function MLPipelineVisualization() {
     },
   ]
 
+  useEffect(() => {
+    // Show popup only if screen width is small (phone)
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setShowPopup(true)
+      } else {
+        setShowPopup(false)
+      }
+    }
+    handleResize()
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [])
+
 
   useEffect(() => {
     let interval: NodeJS.Timeout
@@ -365,56 +381,85 @@ export default function MLPipelineVisualization() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-amber-50">
+      {/* --- Phone Orientation Popup --- */}
+      {showPopup && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999]">
+          <div className="bg-white rounded-xl p-6 shadow-2xl text-center max-w-xs">
+            <Smartphone className="mx-auto w-12 h-12 text-indigo-600 mb-3 transform rotate-90" />
+
+            <h2 className="text-lg font-bold mb-2">{t("popup.title")}</h2>
+            <p
+              className="text-sm text-gray-700 mb-4"
+              dangerouslySetInnerHTML={{ __html: t("popup.message") }}
+            />
+            <Button variant="default" onClick={() => setShowPopup(false)}>
+              {t("popup.button")}
+            </Button>
+          </div>
+        </div>
+      )}
+
+
       {/* Header */}
-      <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50 shadow-sm">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
+      <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50 shadow-sm transition-all">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          
+          {/* Left side (title/subtitle/author) */}
+          {!isHeaderMinimized && (
             <div>
-              <h1 className="text-3xl font-bold text-indigo-700">
-                {t("title")}
-              </h1>
+              <h1 className="text-2xl lg:text-3xl font-bold text-indigo-700">{t("title")}</h1>
               <p className="text-slate-600">{t("subtitle")}</p>
               <p className="text-sm text-gray-600 mt-1 font-[family-name:var(--font-dm-sans)]">
                 {t("author")}
               </p>
             </div>
-            <div className="flex items-center gap-3">
-              <Button
-                onClick={handlePlay}
-                variant={isPlaying ? "secondary" : "default"}
-                size="lg"
-                className="shadow-md"
-              >
-                {isPlaying ? (
-                  <Pause className="w-5 h-5 mr-2" />
-                ) : (
-                  <Play className="w-5 h-5 mr-2" />
-                )}
-                {isPlaying ? t("controls.pause") : t("controls.play")}
-              </Button>
-              <Button
-                onClick={handleReset}
-                variant="outline"
-                size="lg"
-                className="shadow-md bg-transparent"
-              >
-                <RotateCcw className="w-5 h-5 mr-2" />
-                {t("controls.reset")}
-              </Button>
-              <Button
-                onClick={toggleLang}
-                variant="outline"
-                size="lg"
-                className="shadow-md"
-              >
-                {i18n.language === "en"
-                  ? t("controls.lang.es")
-                  : t("controls.lang.en")}
-              </Button>
-            </div>
+          )}
+
+          {/* Right side (always visible controls) */}
+          <div className="flex items-center gap-3">
+            <Button
+              onClick={() => setIsHeaderMinimized(!isHeaderMinimized)}
+              variant="outline"
+              size="sm"
+              className="shadow-md"
+            >
+              {isHeaderMinimized ? "Expand" : "Minimize"}
+            </Button>
+
+            <Button
+              onClick={handlePlay}
+              variant={isPlaying ? "secondary" : "default"}
+              size="lg"
+              className="shadow-md"
+            >
+              {isPlaying ? <Pause className="w-5 h-5 mr-2" /> : <Play className="w-5 h-5 mr-2" />}
+              {isPlaying ? t("controls.pause") : t("controls.play")}
+            </Button>
+
+            <Button
+              onClick={handleReset}
+              variant="outline"
+              size="lg"
+              className="shadow-md bg-transparent"
+            >
+              <RotateCcw className="w-5 h-5 mr-2" />
+              {t("controls.reset")}
+            </Button>
+
+            <Button
+              onClick={toggleLang}
+              variant="outline"
+              size="lg"
+              className="shadow-md"
+            >
+              {i18n.language === "en"
+                ? t("controls.lang.es")
+                : t("controls.lang.en")}
+            </Button>
           </div>
         </div>
       </header>
+
 
 <main className="container mx-auto px-4 py-6">
   <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -440,7 +485,7 @@ export default function MLPipelineVisualization() {
           </svg>
 
           {nodes.map((node) => (
-              <div
+            <div
               key={node.id}
               className={`absolute rounded-xl border-2 p-4 cursor-pointer transition-all duration-500 hover:scale-105 ${getNodeColor(node)} ${
                 node.isActive ? "animate-fadeInUp" : "opacity-30"
@@ -453,10 +498,21 @@ export default function MLPipelineVisualization() {
                 transform: node.type === "decision" ? "rotate(45deg)" : "none",
                 boxShadow: node.isActive ? "0 8px 25px rgba(0,0,0,0.15)" : "none",
               }}
-              onClick={() => setSelectedNode(selectedNode === node.id ? null : node.id)}
+              onClick={() => {
+                setSelectedNode(node.id)
+                // extra: scroll Node Details into view on mobile
+                if (window.innerWidth < 768) {
+                  setTimeout(() => {
+                    const details = document.getElementById("node-details")
+                    details?.scrollIntoView({ behavior: "smooth" })
+                  }, 100)
+                }
+              }}
             >
               <div
-                className={`flex items-center gap-2 text-center justify-center h-full ${node.type === "decision" ? "transform -rotate-45" : ""}`}
+                className={`flex items-center gap-2 text-center justify-center h-full ${
+                  node.type === "decision" ? "transform -rotate-45" : ""
+                }`}
               >
                 {node.icon}
                 <span className="text-sm font-bold font-[family-name:var(--font-space-grotesk)] leading-tight">
@@ -465,6 +521,7 @@ export default function MLPipelineVisualization() {
               </div>
             </div>
           ))}
+
         </div>
       </Card>
     </div>
@@ -575,7 +632,7 @@ export default function MLPipelineVisualization() {
 
     {/* Node Details */}
     {selectedNode && (
-      <Card className="p-4 shadow-lg bg-white/95">
+      <Card id="node-details" className="p-4 shadow-lg bg-white/95">
         <h3 className="font-bold mb-3 font-[family-name:var(--font-space-grotesk)] text-red-800">
           {t("node_details")}
         </h3>
@@ -594,6 +651,7 @@ export default function MLPipelineVisualization() {
         })()}
       </Card>
     )}
+
 
     {/* Legend */}
     <Card className="p-4 shadow-lg bg-white/95">

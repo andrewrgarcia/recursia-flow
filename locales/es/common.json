@@ -1,7 +1,7 @@
 {
   "title": "Flujo de Selección de Variables en Series Temporales con IA",
   "subtitle": "Sistema agnóstico basado en meta-aprendizaje para elegir variables de pronóstico",
-  "author": "Andrew R. Garcia, PhD 2025",
+  "author": "Andrew Garcia, PhD 2025",
   "controls": {
     "play": "Reproducir",
     "pause": "Pausa",
@@ -10,6 +10,12 @@
       "en": "EN",
       "es": "ES"
     }
+  },
+
+  "popup": {
+    "title": "Versión móvil",
+    "message": "Coloca tu teléfono en <strong>horizontal</strong>",
+    "button": "Entendido"
   },
 
   "nodes": {

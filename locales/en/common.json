@@ -1,7 +1,7 @@
 {
   "title": "AI-Driven Variable Selection for Time Series Forecasting",
   "subtitle": "A Model-Agnostic Meta-Learning Workflow",
-  "author": "Andrew R. Garcia, PhD 2025",
+  "author": "Andrew Garcia, PhD 2025",
   "controls": {
     "play": "Play",
     "pause": "Pause",
@@ -10,6 +10,12 @@
       "en": "EN",
       "es": "ES"
     }
+  },
+
+  "popup": {
+    "title": "Phone version",
+    "message": "Put your phone in <strong>landscape</strong> orientation",
+    "button": "Got it"
   },
 
   "nodes": {
