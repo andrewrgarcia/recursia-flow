@@ -12,6 +12,13 @@
     }
   },
 
+  "what_is_meta_title": "¿Qué es el Meta-aprendizaje?",
+  "what_is_meta_text": "Meta-aprendizaje significa 'aprender a aprender'. En este sistema, la experiencia proviene del rendimiento de los modelos de pronóstico, no solo de los datos en bruto. Después de cada prueba, el sistema observa si los pronósticos mejoraron o empeoraron y vincula ese resultado con descriptores de las variables seleccionadas — ya sea sus metadatos (institución, fecha de inicio, clasificación) o su índice posicional en la base de datos. Al iterar este ciclo, el sistema aprende reglas para una mejor selección con el tiempo. Como aprende a partir de los resultados de otros procesos de aprendizaje, literalmente está 'aprendiendo a aprender'.",
+
+  "explain_like_5_title": "Explica la Introspección Recursiva como si tuviera 5 años 👶",
+  "explain_like_5_text": "Imagina que eliges jugadores para un equipo. Al inicio pruebas jugadores al azar. Ves cómo juega el equipo ⚽. La próxima vez recuerdas quién lo hizo bien 🧠 y lo eliges otra vez. A veces pruebas alguien nuevo 🎲, por si acaso. Con el tiempo, tu equipo mejora porque aprendes a escoger la mejor mezcla. Eso es lo que hace la Introspección Recursiva: aprende a elegir las mejores variables para pronosticar la economía.",
+
+
   "orientation_note": "Smartphone detectado — usa la orientación horizontal y minimiza el encabezado con el botón.",
 
   "nodes": {

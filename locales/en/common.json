@@ -12,6 +12,14 @@
     }
   },
 
+  "what_is_meta_title": "What is Meta-learning?",
+  "what_is_meta_text": "Meta-learning means 'learning to learn'. In this system, the experience comes from how forecasting models perform, not just from raw data. After each trial, the system looks at whether a model’s forecasts improved or worsened, and links that outcome back to descriptors of the chosen variables — either their metadata (e.g., institution, start date, classification) or their positional index in the database. By iterating this loop, the system learns rules for better selection over time. Because it learns from the results of other learning processes, it is literally 'learning to learn'.",
+
+
+  "explain_like_5_title": "Explain Recursive Introspection like I'm 5 👶",
+  "explain_like_5_text": "Imagine you're picking players for a team. At first you try random players. You see how the team performs 🏈. Next time, you remember who played well 🧠, and you pick them again. Sometimes you still try someone new 🎲, just in case. Over time, your team keeps getting better because you learn how to pick the best mix. That's what Recursive Introspection does — it learns how to pick the best variables to forecast the economy.",
+
+
   "orientation_note": "Smartphone detected — for the best experience, view in landscape orientation and use the button to minimize the header.",
 
   "nodes": {

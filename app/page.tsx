@@ -435,6 +435,27 @@ export default function MLPipelineVisualization() {
 
 <main className="container mx-auto px-4 py-6">
   <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+    {/* Collapsible Explanations */}
+    <div className="lg:col-span-3 space-y-4">
+      <Card className="p-4 shadow-lg bg-white/95">
+        <details>
+          <summary className="cursor-pointer font-bold text-red-800">
+            {t("what_is_meta_title")}
+          </summary>
+          <p className="text-sm text-gray-700 mt-2">{t("what_is_meta_text")}</p>
+        </details>
+      </Card>
+
+      <Card className="p-4 shadow-lg bg-white/95">
+        <details>
+          <summary className="cursor-pointer font-bold text-red-800">
+            {t("explain_like_5_title")}
+          </summary>
+          <p className="text-sm text-gray-700 mt-2">{t("explain_like_5_text")}</p>
+        </details>
+      </Card>
+    </div>
+
     {/* Flowchart */}
     <div className="lg:col-span-3">
       <Card className="p-4 shadow-xl bg-white/95">
